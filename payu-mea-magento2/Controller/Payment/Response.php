@@ -30,7 +30,7 @@ class Response extends AbstractAction
         $result = '';
         try {
             $payu = $this->_initPayUReference();
-
+          
             // if there is an order - load it
             $orderId = $this->_getCheckoutSession()->getLastOrderId();
             /** @var \Magento\Sales\Model\Order $order */
@@ -43,14 +43,14 @@ class Response extends AbstractAction
             if($payu && $order) {
                 $this->response->setData('params', $payu);
 
-                $result = $this->response->processReturn($order)
-                ;
+                $result = $this->response->processReturn($order);
+
                 if($result !== true) {
                     $this->messageManager->addErrorMessage(__($result));
                 } else {
                     return $this->sendSuccessPage($order);
                 }
-            }
+            } 
         } catch (LocalizedException $e) {
             $this->messageManager->addExceptionMessage($e, __('Unable to validate order'));
         } catch (\Exception $e) {

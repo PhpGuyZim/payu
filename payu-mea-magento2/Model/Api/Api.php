@@ -283,7 +283,7 @@ class Api extends \Magento\Framework\DataObject
     }
 
     public function doSetTransaction($requestData)
-    {
+    {        
         $response = $this->getSoapSingleton()->setTransaction($requestData);
 
         return json_decode(json_encode($response));
@@ -296,7 +296,7 @@ class Api extends \Magento\Framework\DataObject
             $header = $this->getSoapHeader();
             $soapWsdlUrl = $this->getSoapEndpoint() . '?wsdl';
             $this->wsdlUrl = $soapWsdlUrl;
-
+            
             $headerBody = new \SoapVar($header, XSD_ANYXML, null, null, null);
             $soapHeader = new \SOAPHeader(self::$ns, 'Security', $headerBody, true);
 

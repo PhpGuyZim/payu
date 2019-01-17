@@ -35,7 +35,6 @@ class Notify extends AbstractAction
             /** @var \Magento\Sales\Model\Order $order */
             $order = $incrementId ? $this->_orderFactory->create()->loadByIncrementId($incrementId) : false;
             if ($order) {
-                file_put_contents($_SERVER['DOCUMENT_ROOT'] . '/debugger.log', print_r($ipnData,1));
                 $this->response->processNotify($ipnData, $order);
                 http_response_code('200');
             } else {

@@ -131,6 +131,11 @@ abstract class AbstractPayment extends AbstractPayU
     protected $transactionBuilder;
 
     /**
+     * @var \Magento\Sales\Model\Order\Config
+     */
+    protected $OrderConfig;
+
+    /**
      * @var \Magento\Framework\DB\Transaction
      */
     protected $_transaction;
@@ -160,6 +165,7 @@ abstract class AbstractPayment extends AbstractPayU
         \Magento\Sales\Api\OrderRepositoryInterface $orderRepository,
         \Magento\Framework\DB\Transaction $transaction,
         \Magento\Sales\Model\Order\Email\Sender\InvoiceSender $invoiceSender,
+        \Magento\Sales\Model\Order\Config $OrderConfig,
         array $data = array()
     ) {
         parent::__construct(
@@ -193,6 +199,7 @@ abstract class AbstractPayment extends AbstractPayU
         $this->orderSender = $orderSender;
         $this->invoiceSender = $invoiceSender;
         $this->_transaction = $transaction;
+        $this->OrderConfig = $OrderConfig;
 
         $this->initializeApi();
 
@@ -716,6 +723,12 @@ abstract class AbstractPayment extends AbstractPayU
                     $invoice->getOrder()
                 );
                 $transactionService->save();
+
+                $status = $this->OrderConfig->getStateDefaultStatus('processing');
+                $order->setState("processing")->setStatus($status);
+                $order->save();
+
+
                 $this->invoiceSender->send($invoice);
                 //send notification code
                 $order->addStatusHistoryComment(
@@ -723,8 +736,7 @@ abstract class AbstractPayment extends AbstractPayU
                 )
                     ->setIsCustomerNotified(true)
                     ->save();
-                $order->setState("processing")->setStatus("processing");
-                $order->save();
+
             }
 
         } catch (\Exception $e) {
